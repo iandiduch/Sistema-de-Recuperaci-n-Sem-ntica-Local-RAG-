@@ -61,6 +61,7 @@ class EmbeddingFactory:
                 return OpenAIEmbeddings(
                     model=config.embedding_model,
                     api_key=api_key,  # type: ignore[arg-type]
+                    base_url=str(config.base_url) if config.base_url else None,
                 )
 
             case EmbeddingProvider.CHROMA_DEFAULT | EmbeddingProvider.HUGGINGFACE:

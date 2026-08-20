@@ -1,8 +1,12 @@
+import dotenv
 from typing import Optional
-from pydantic import AnyHttpUrl, SecretStr, field_validator, model_validator
+from pydantic import AnyHttpUrl, SecretStr, Field, AliasChoices, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from models import Provider, EmbeddingProvider
+
+# Forzar carga de variables desde .env si existe para sobreescribir variables de sesión obsoletas
+dotenv.load_dotenv(override=True)
 
 
 class RAGConfig(BaseSettings):
@@ -18,26 +22,74 @@ class RAGConfig(BaseSettings):
     )
 
     # Configuración del Modelo LLM
-    provider: Provider = Provider.OPENAI
-    model: str = "gpt-4o-mini"
-    openai_apikey: Optional[SecretStr] = None
-    anthropic_apikey: Optional[SecretStr] = None
-    base_url: Optional[AnyHttpUrl] = None
-    timeout_seconds: int = 60
-    temperature: float = 0.0
-    max_retries: int = 3
+    provider: Provider = Field(
+        default=Provider.OPENAI,
+        validation_alias=AliasChoices("PROVIDER", "provider")
+    )
+    model: str = Field(
+        default="gpt-4o-mini",
+        validation_alias=AliasChoices("MODEL", "model")
+    )
+    openai_apikey: Optional[SecretStr] = Field(
+        default=None,
+        validation_alias=AliasChoices("OPENAI_API_KEY", "openai_api_key", "openai_apikey")
+    )
+    anthropic_apikey: Optional[SecretStr] = Field(
+        default=None,
+        validation_alias=AliasChoices("ANTHROPIC_API_KEY", "anthropic_api_key", "anthropic_apikey")
+    )
+    base_url: Optional[AnyHttpUrl] = Field(
+        default=None,
+        validation_alias=AliasChoices("BASE_URL", "base_url")
+    )
+    timeout_seconds: int = Field(
+        default=60,
+        validation_alias=AliasChoices("TIMEOUT_SECONDS", "timeout_seconds")
+    )
+    temperature: float = Field(
+        default=0.0,
+        validation_alias=AliasChoices("TEMPERATURE", "temperature")
+    )
+    max_retries: int = Field(
+        default=3,
+        validation_alias=AliasChoices("MAX_RETRIES", "max_retries")
+    )
 
     # Configuración de Embeddings y Base Vectorial ChromaDB
-    embedding_provider: EmbeddingProvider = EmbeddingProvider.OPENAI
-    embedding_model: str = "text-embedding-3-small"
-    chroma_persist_dir: str = "./vectorstore"
-    collection_name: str = "rag_knowledge_base"
+    embedding_provider: EmbeddingProvider = Field(
+        default=EmbeddingProvider.OPENAI,
+        validation_alias=AliasChoices("EMBEDDING_PROVIDER", "embedding_provider")
+    )
+    embedding_model: str = Field(
+        default="text-embedding-3-small",
+        validation_alias=AliasChoices("EMBEDDING_MODEL", "embedding_model")
+    )
+    chroma_persist_dir: str = Field(
+        default="./vectorstore",
+        validation_alias=AliasChoices("CHROMA_PERSIST_DIR", "chroma_persist_dir")
+    )
+    collection_name: str = Field(
+        default="rag_knowledge_base",
+        validation_alias=AliasChoices("COLLECTION_NAME", "collection_name")
+    )
 
     # Configuración de Ingesta y Recuperación
-    data_dir: str = "./data"
-    chunk_size: int = 500
-    chunk_overlap: int = 50
-    top_k: int = 4
+    data_dir: str = Field(
+        default="./data",
+        validation_alias=AliasChoices("DATA_DIR", "data_dir")
+    )
+    chunk_size: int = Field(
+        default=500,
+        validation_alias=AliasChoices("CHUNK_SIZE", "chunk_size")
+    )
+    chunk_overlap: int = Field(
+        default=50,
+        validation_alias=AliasChoices("CHUNK_OVERLAP", "chunk_overlap")
+    )
+    top_k: int = Field(
+        default=4,
+        validation_alias=AliasChoices("TOP_K", "top_k")
+    )
 
     @field_validator("chunk_size")
     @classmethod

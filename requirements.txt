@@ -1,0 +1,21 @@
+# Core Framework & LangChain LCEL
+langchain>=0.2.0
+langchain-core>=0.2.0
+langchain-community>=0.2.0
+langchain-chroma>=0.1.0
+langchain-text-splitters>=0.2.0
+
+# Base de datos vectorial
+chromadb>=0.5.0
+
+# Tokenización y Conteo de Tokens
+tiktoken>=0.7.0
+
+# Proveedores de Modelos LLM y Embeddings
+langchain-openai>=0.1.0
+langchain-anthropic>=0.1.0
+
+# Validación de esquemas y configuración
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+python-dotenv>=1.0.0

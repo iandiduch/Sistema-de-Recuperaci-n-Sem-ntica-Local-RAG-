@@ -17,7 +17,7 @@ logger = logging.getLogger("RAGMain")
 
 async def main():
     print("=" * 80)
-    print("   SISTEMA DE RECUPERACIÓN SEMÁNTICA LOCAL (RAG) - PRE-ENTREGA 3   ")
+    print("   SISTEMA DE RECUPERACIÓN SEMÁNTICA LOCAL (RAG)   ")
     print("        LangChain LCEL Asíncrono + ChromaDB + Validación Pydantic   ")
     print("=" * 80 + "\n")
 

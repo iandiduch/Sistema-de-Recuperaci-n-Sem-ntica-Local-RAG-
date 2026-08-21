@@ -1,6 +1,6 @@
-# Pre-entrega 3: Sistema de Recuperación Semántica Local (RAG)
+# Sistema de Recuperación Semántica Local (RAG)
 
-Este repositorio contiene la solución completa a la **Pre-entrega 3: Sistema de Recuperación Semántica Local (RAG)**, implementando una arquitectura modular y asíncrona con **LangChain Expression Language (LCEL)**, base de datos vectorial local con **ChromaDB**, tokenización estratégica con **tiktoken**, y validación tipada estricta mediante **Pydantic**.
+Este repositorio contiene la solución completa al **Sistema de Recuperación Semántica Local (RAG)**, implementando una arquitectura modular y asíncrona con **LangChain Expression Language (LCEL)**, base de datos vectorial local con **ChromaDB**, tokenización estratégica con **tiktoken**, y validación tipada estricta mediante **Pydantic**.
 
 ---
 
@@ -18,7 +18,7 @@ Un flujo **End-to-End de RAG (Retrieval-Augmented Generation)** capaz de:
 ## 📁 Estructura del Repositorio
 
 ```text
-preentrega/
+proyecto/
 ├── .env.example              # Plantilla de variables de entorno (API keys, configuración)
 ├── .gitignore                # Reglas de exclusión (ignora .env, vectorstore, __pycache__)
 ├── pytest.ini                # Configuración de Pytest (asyncio_mode, markers, testpaths)

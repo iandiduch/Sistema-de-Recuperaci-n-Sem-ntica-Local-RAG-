@@ -21,8 +21,9 @@ Un flujo **End-to-End de RAG (Retrieval-Augmented Generation)** capaz de:
 preentrega/
 ├── .env.example              # Plantilla de variables de entorno (API keys, configuración)
 ├── .gitignore                # Reglas de exclusión (ignora .env, vectorstore, __pycache__)
+├── pytest.ini                # Configuración de Pytest (asyncio_mode, markers, testpaths)
 ├── README.md                 # Documentación técnica y guía de ejecución
-├── requirements.txt          # Dependencias de Python necesarias
+├── requirements.txt          # Dependencias de Python necesarias (incluye pytest, pytest-asyncio)
 ├── models.py                 # Enums de proveedores (Provider, EmbeddingProvider, NivelConfianza)
 ├── schemas.py                # Modelos Pydantic de salida estructurada (RAGResponse, ReferenciaDocumento)
 ├── config.py                 # Configuración centralizada y validada con Pydantic BaseSettings
@@ -30,7 +31,11 @@ preentrega/
 ├── document_processor.py     # Limpieza regex, conteo por tokens con tiktoken y RecursiveCharacterTextSplitter
 ├── ingestion.py              # Carga de archivos /data, verificación de persistencia y upsert en ChromaDB
 ├── chain.py                  # Cadena LCEL RAG asíncrona, prompt de veracidad y get_rag_response()
-├── main.py                   # Script de ejecución con casos de prueba (Grounded vs. Preguntas Trampa)
+├── main.py                   # Script demostrativo de ejecución interactiva de casos de prueba
+├── tests/                    # Suite de pruebas automatizadas con Pytest
+│   ├── __init__.py           # Inicialización del paquete de tests
+│   ├── conftest.py           # Fixtures reutilizables (configuración, mocks, respuestas esperadas)
+│   └── test_rag.py           # Pruebas unitarias, asíncronas LCEL e integración
 └── data/                     # Dataset de documentos técnicos (.md)
     ├── 01_arquitectura_microservicios.md
     ├── 02_politica_resiliencia_reintentos.md
@@ -140,6 +145,40 @@ Si deseas indexar o forzar la reconstrucción de la base vectorial:
 ```bash
 python ingestion.py
 ```
+
+---
+
+## 🧪 Suite de Pruebas Automatizadas con Pytest
+
+El proyecto cuenta con una suite formal de **24 pruebas automatizadas** en `tests/test_rag.py` configurada con `pytest` y `pytest-asyncio` para garantizar reproducibilidad y validación continua sin depender de ejecuciones manuales:
+
+### 1. Ejecutar Todas las Pruebas
+
+```bash
+pytest -v
+```
+
+### 2. Ejecutar Pruebas por Categoría (Markers)
+
+```bash
+# Solo pruebas unitarias deterministas (desacopladas, sin consumo de API):
+pytest -m unit -v
+
+# Solo pruebas de integración en vivo (requiere API key en .env):
+pytest -m integration -v
+```
+
+### 3. Cobertura de la Suite de Pruebas
+
+| Módulo de Pruebas | Clase de Test | Qué Valida |
+|---|---|---|
+| **Preprocesador y Tokenizer** | `TestDocumentProcessor` | Limpieza regex de caracteres de control, conteo exacto de tokens con `tiktoken`, chunking (`>=500` tokens) y generación de metadatos (`chunk_id`, `source`, `tokens`). |
+| **Esquemas Pydantic** | `TestSchemas` | Validación estricta de `RAGResponse`, `ReferenciaDocumento` y consistencia de tipos (`NivelConfianza`). |
+| **Configuración del Sistema** | `TestRAGConfig` | Restricciones de negocio en `RAGConfig` (límites de `top_k`, `chunk_size >= 100`, `chunk_overlap < chunk_size`, `timeout > 0`). |
+| **Formateo y Prompts** | `TestContextAndPromptFormatting` | Formateo trazable de citas (`[FUENTE: ... \| CHUNK ID: ...]`) y estructura de directivas anti-alucinación en el prompt. |
+| **Factorías Desacopladas** | `TestFactories` | Validación de instanciación y control de errores por credenciales faltantes. |
+| **Cadena Asíncrona LCEL** | `TestRAGChainAsync` | Invocación `.ainvoke()`, validación de respuestas Grounded con citas, activación del filtro Anti-Alucinación ("No lo sé"), y mecanismo de reintentos con realimentación. |
+| **Integración en Vivo** | `TestLiveIntegration` | Validación end-to-end con ChromaDB y modelo LLM real (omitida si no hay API key configurada). |
 
 ---
 

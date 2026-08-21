@@ -106,6 +106,12 @@ async def main():
         except Exception as err:
             print(f"[Error en la ejecución del caso #{i}]: {err}\n")
 
+    print("=================================================================")
+    print("  SUITE AUTOMATIZADA FORMAL DISPONIBLE CON PYTEST")
+    print("  Para ejecutar todos los tests unitarios y de integración:")
+    print("  pytest tests/test_rag.py -v")
+    print("=================================================================\n")
+
 
 if __name__ == "__main__":
     asyncio.run(main())
